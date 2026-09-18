@@ -110,7 +110,7 @@
             border-style: solid;
         }
 
-        /* Повністю обведені картки з власними кольорами */
+        /* Обведені картки з власними кольорами */
         .card-inbox { border-color: var(--inbox-border); background: var(--inbox-bg); }
         .card-active { border-color: var(--active-border); background: var(--active-bg); }
         .card-review { border-color: var(--review-border); background: var(--review-bg); }
@@ -165,9 +165,18 @@
             transform: translateY(-1px);
         }
 
-        .btn-action {
-            background: rgba(255, 255, 255, 0.6);
-            font-weight: 600;
+        /* Помітно виділені кнопки зміни кількості в Inbox */
+        .btn-highlighted {
+            background: var(--bg-color);
+            border: 1.5px solid var(--inbox-color);
+            color: var(--inbox-color);
+            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(35, 131, 226, 0.1);
+        }
+
+        .btn-highlighted:hover {
+            background: var(--inbox-color);
+            color: #ffffff;
         }
 
         .btn-undo-stage {
@@ -226,9 +235,9 @@
                 <div class="stage-title">📥 Inbox</div>
                 <div class="stage-count" id="inboxCount">0</div>
                 <div class="stage-actions">
-                    <button class="btn-action" onclick="modify('inbox', -1)">-1</button>
-                    <button class="btn-action" onclick="modify('inbox', 1)">+1</button>
-                    <button class="btn-action" onclick="modify('inbox', 5)">+5</button>
+                    <button class="btn-highlighted" onclick="modify('inbox', -1)">-1</button>
+                    <button class="btn-highlighted" onclick="modify('inbox', 1)">+1</button>
+                    <button class="btn-highlighted" onclick="modify('inbox', 5)">+5</button>
                     <button class="btn-move-inbox" onclick="moveInboxToActive()">Move ➔</button>
                     <button class="btn-undo-stage" onclick="undoAction()" title="Undo">↩</button>
                 </div>
@@ -271,21 +280,21 @@
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_boxed_undo')) || {
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_highlighted')) || {
             inbox: 0,
             active: 0,
             review: 0,
             mastered: 0
         };
 
-        let historyStack = JSON.parse(localStorage.getItem('vocab_pipeline_boxed_undo_hist')) || [];
+        let historyStack = JSON.parse(localStorage.getItem('vocab_pipeline_highlighted_hist')) || [];
 
         function saveState() {
             historyStack.push({ ...data });
             if (historyStack.length > 20) {
                 historyStack.shift();
             }
-            localStorage.setItem('vocab_pipeline_boxed_undo_hist', JSON.stringify(historyStack));
+            localStorage.setItem('vocab_pipeline_highlighted_hist', JSON.stringify(historyStack));
         }
 
         function updateUI() {
@@ -294,7 +303,7 @@
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
             
-            localStorage.setItem('vocab_pipeline_boxed_undo', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_highlighted', JSON.stringify(data));
         }
 
         function modify(stage, amount) {
@@ -339,7 +348,7 @@
         function undoAction() {
             if (historyStack.length > 0) {
                 data = historyStack.pop();
-                localStorage.setItem('vocab_pipeline_boxed_undo_hist', JSON.stringify(historyStack));
+                localStorage.setItem('vocab_pipeline_highlighted_hist', JSON.stringify(historyStack));
                 updateUI();
             } else {
                 alert("No actions to undo!");
