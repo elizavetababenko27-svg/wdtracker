@@ -16,6 +16,8 @@
             --muted-color: #9b9a97;
             --undo-bg: #f3f3f2;
             --undo-hover: #e8e8e6;
+            --reset-color: #eb5757;
+            --reset-hover: #d34646;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -30,6 +32,8 @@
                 --muted-color: #888888;
                 --undo-bg: #2c2c2c;
                 --undo-hover: #383838;
+                --reset-color: #f87171;
+                --reset-hover: #ef4444;
             }
         }
 
@@ -144,18 +148,37 @@
             opacity: 0.9;
         }
 
+        .action-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
         .btn-undo {
             background: var(--undo-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            width: 100%;
             padding: 8px;
             font-weight: 500;
-            margin-top: 4px;
+            flex: 1;
         }
 
         .btn-undo:hover {
             background: var(--undo-hover);
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--reset-color);
+            border: 1px solid var(--reset-color);
+            padding: 8px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .btn-reset:hover {
+            background: var(--reset-color);
+            color: #ffffff;
         }
 
         .mastered-box {
@@ -220,22 +243,25 @@
             <span class="mastered-count" id="masteredCount">0</span>
         </div>
 
-        <button class="btn-undo" onclick="undoAction()">↩ Undo Last Action</button>
+        <div class="action-row">
+            <button class="btn-undo" onclick="undoAction()">↩ Undo</button>
+            <button class="btn-reset" onclick="resetAll()">🗑️ Reset All</button>
+        </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_undo')) || {
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_reset')) || {
             inbox: 0,
             active: 0,
             review: 0,
             mastered: 0
         };
 
-        let previousData = JSON.parse(localStorage.getItem('vocab_pipeline_prev')) || null;
+        let previousData = JSON.parse(localStorage.getItem('vocab_pipeline_reset_prev')) || null;
 
         function saveState() {
             previousData = { ...data };
-            localStorage.setItem('vocab_pipeline_prev', JSON.stringify(previousData));
+            localStorage.setItem('vocab_pipeline_reset_prev', JSON.stringify(previousData));
         }
 
         function updateUI() {
@@ -244,7 +270,7 @@
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
             
-            localStorage.setItem('vocab_pipeline_undo', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_reset', JSON.stringify(data));
         }
 
         function modifyInbox(amount) {
@@ -289,11 +315,19 @@
         function undoAction() {
             if (previousData) {
                 data = { ...previousData };
-                previousData = null; // снуємо пам'ять до наступної дії
-                localStorage.removeItem('vocab_pipeline_prev');
+                previousData = null;
+                localStorage.removeItem('vocab_pipeline_reset_prev');
                 updateUI();
             } else {
                 alert("No actions to undo!");
+            }
+        }
+
+        function resetAll() {
+            if (confirm("Are you sure you want to reset all counters to 0?")) {
+                saveState();
+                data = { inbox: 0, active: 0, review: 0, mastered: 0 };
+                updateUI();
             }
         }
 
