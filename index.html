@@ -13,24 +13,22 @@
             --muted-color: #9b9a97;
             
             /* Кольори секцій (Світла тема) */
-            --inbox-bg: rgba(35, 131, 226, 0.06);
-            --inbox-border: rgba(35, 131, 226, 0.2);
+            --inbox-bg: rgba(35, 131, 226, 0.04);
+            --inbox-border: rgba(35, 131, 226, 0.25);
             --inbox-color: #2383e2;
 
-            --active-bg: rgba(99, 102, 241, 0.06);
-            --active-border: rgba(99, 102, 241, 0.2);
+            --active-bg: rgba(99, 102, 241, 0.04);
+            --active-border: rgba(99, 102, 241, 0.25);
             --active-color: #6366f1;
 
-            --review-bg: rgba(245, 158, 11, 0.06);
-            --review-border: rgba(245, 158, 11, 0.2);
+            --review-bg: rgba(245, 158, 11, 0.04);
+            --review-border: rgba(245, 158, 11, 0.25);
             --review-color: #d97706;
 
-            --mastered-bg: rgba(15, 123, 108, 0.06);
-            --mastered-border: rgba(15, 123, 108, 0.2);
+            --mastered-bg: rgba(15, 123, 108, 0.04);
+            --mastered-border: rgba(15, 123, 108, 0.25);
             --mastered-color: #0f7b6c;
 
-            --undo-bg: #f3f3f2;
-            --undo-hover: #e8e8e6;
             --reset-color: #eb5757;
         }
 
@@ -43,24 +41,22 @@
                 --muted-color: #888888;
                 
                 /* Кольори секцій (Темна тема) */
-                --inbox-bg: rgba(59, 130, 246, 0.1);
+                --inbox-bg: rgba(59, 130, 246, 0.06);
                 --inbox-border: rgba(59, 130, 246, 0.3);
                 --inbox-color: #60a5fa;
 
-                --active-bg: rgba(129, 140, 248, 0.1);
+                --active-bg: rgba(129, 140, 248, 0.06);
                 --active-border: rgba(129, 140, 248, 0.3);
                 --active-color: #818cf8;
 
-                --review-bg: rgba(251, 191, 36, 0.1);
+                --review-bg: rgba(251, 191, 36, 0.06);
                 --review-border: rgba(251, 191, 36, 0.3);
                 --review-color: #fbbf24;
 
-                --mastered-bg: rgba(16, 185, 129, 0.1);
+                --mastered-bg: rgba(16, 185, 129, 0.06);
                 --mastered-border: rgba(16, 185, 129, 0.3);
                 --mastered-color: #34d399;
 
-                --undo-bg: #2c2c2c;
-                --undo-hover: #383838;
                 --reset-color: #f87171;
             }
         }
@@ -100,24 +96,25 @@
         .pipeline-stack {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .stage-card {
             background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 14px 12px;
-            text-align: center; /* Центруємо весь контент у картці */
+            text-align: center;
             transition: all 0.2s ease;
+            border-width: 1.5px;
+            border-style: solid;
         }
 
-        /* Персональні кольори карток */
-        .card-inbox { border-top: 4px solid var(--inbox-color); background: var(--inbox-bg); }
-        .card-active { border-top: 4px solid var(--active-color); background: var(--active-bg); }
-        .card-review { border-top: 4px solid var(--review-color); background: var(--review-bg); }
-        .card-mastered { border-top: 4px solid var(--mastered-color); background: var(--mastered-bg); }
+        /* Повністю обведені картки з власними кольорами */
+        .card-inbox { border-color: var(--inbox-border); background: var(--inbox-bg); }
+        .card-active { border-color: var(--active-border); background: var(--active-bg); }
+        .card-review { border-color: var(--review-border); background: var(--review-bg); }
+        .card-mastered { border-color: var(--mastered-border); background: var(--mastered-bg); }
 
         .stage-title {
             font-size: 12px;
@@ -132,7 +129,6 @@
         .card-review .stage-title { color: var(--review-color); }
         .card-mastered .stage-title { color: var(--mastered-color); }
 
-        /* Центровані великі цифри */
         .stage-count {
             font-size: 32px;
             font-weight: 800;
@@ -174,41 +170,40 @@
             font-weight: 600;
         }
 
-        /* Кнопки переміщення під кольори етапів */
+        .btn-undo-stage {
+            background: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+            font-size: 11px;
+            color: var(--muted-color);
+        }
+        .btn-undo-stage:hover {
+            color: var(--text-color);
+        }
+
+        /* Кнопки переміщення */
         .btn-move-inbox { background: var(--inbox-color); color: #ffffff; border: none; font-weight: 600; }
         .btn-move-active { background: var(--active-color); color: #ffffff; border: none; font-weight: 600; }
         .btn-move-review { background: var(--mastered-color); color: #ffffff; border: none; font-weight: 600; }
 
-        .action-row {
+        .global-reset-row {
             display: flex;
-            gap: 8px;
+            justify-content: center;
             border-top: 1px solid var(--border-color);
             padding-top: 12px;
-            margin-top: 14px;
-        }
-
-        .btn-undo {
-            background: var(--undo-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 7px;
-            font-size: 12px;
-            font-weight: 500;
-            flex: 1;
-        }
-
-        .btn-undo:hover {
-            background: var(--undo-hover);
+            margin-top: 4px;
         }
 
         .btn-reset {
             background: transparent;
             color: var(--reset-color);
             border: 1px solid var(--reset-color);
-            padding: 7px;
+            padding: 7px 16px;
             font-size: 12px;
             font-weight: 500;
-            flex: 1;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            max-width: 160px;
         }
 
         .btn-reset:hover {
@@ -235,6 +230,7 @@
                     <button class="btn-action" onclick="modify('inbox', 1)">+1</button>
                     <button class="btn-action" onclick="modify('inbox', 5)">+5</button>
                     <button class="btn-move-inbox" onclick="moveInboxToActive()">Move ➔</button>
+                    <button class="btn-undo-stage" onclick="undoAction()" title="Undo">↩</button>
                 </div>
             </div>
 
@@ -243,9 +239,8 @@
                 <div class="stage-title">🔄 Active</div>
                 <div class="stage-count" id="activeCount">0</div>
                 <div class="stage-actions">
-                    <button class="btn-action" onclick="modify('active', -1)">-1</button>
-                    <button class="btn-action" onclick="modify('active', 1)">+1</button>
-                    <button class="btn-move-active" onclick="moveActiveToReview()">Move ➔</button>
+                    <button class="btn-move-active" onclick="moveActiveToReview()">Move to Review ➔</button>
+                    <button class="btn-undo-stage" onclick="undoAction()" title="Undo">↩ Undo</button>
                 </div>
             </div>
 
@@ -254,9 +249,8 @@
                 <div class="stage-title">🔥 Review Stage</div>
                 <div class="stage-count" id="reviewCount">0</div>
                 <div class="stage-actions">
-                    <button class="btn-action" onclick="modify('review', -1)">-1</button>
-                    <button class="btn-action" onclick="modify('review', 1)">+1</button>
                     <button class="btn-move-review" onclick="moveReviewToMastered()">Master 🌟</button>
+                    <button class="btn-undo-stage" onclick="undoAction()" title="Undo">↩ Undo</button>
                 </div>
             </div>
         </div>
@@ -265,31 +259,33 @@
         <div class="stage-card card-mastered">
             <div class="stage-title">🌟 Total Mastered</div>
             <div class="stage-count" id="masteredCount">0</div>
+            <div style="margin-top: 6px;">
+                <button class="btn-undo-stage" onclick="undoAction()" style="width: auto; padding: 4px 12px;">↩ Undo Mastered</button>
+            </div>
         </div>
 
-        <!-- Global Actions: Undo & Reset -->
-        <div class="action-row">
-            <button class="btn-undo" onclick="undoAction()">↩ Undo (<span id="undoCount">0</span>)</button>
-            <button class="btn-reset" onclick="resetAll()">🗑️ Reset All</button>
+        <!-- Global Reset -->
+        <div class="global-reset-row">
+            <button class="btn-reset" onclick="resetAll()">🗑️ Reset All to 0</button>
         </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_centered')) || {
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_boxed_undo')) || {
             inbox: 0,
             active: 0,
             review: 0,
             mastered: 0
         };
 
-        let historyStack = JSON.parse(localStorage.getItem('vocab_pipeline_centered_hist')) || [];
+        let historyStack = JSON.parse(localStorage.getItem('vocab_pipeline_boxed_undo_hist')) || [];
 
         function saveState() {
             historyStack.push({ ...data });
             if (historyStack.length > 20) {
                 historyStack.shift();
             }
-            localStorage.setItem('vocab_pipeline_centered_hist', JSON.stringify(historyStack));
+            localStorage.setItem('vocab_pipeline_boxed_undo_hist', JSON.stringify(historyStack));
         }
 
         function updateUI() {
@@ -297,9 +293,8 @@
             document.getElementById('activeCount').innerText = data.active;
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
-            document.getElementById('undoCount').innerText = historyStack.length;
             
-            localStorage.setItem('vocab_pipeline_centered', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_boxed_undo', JSON.stringify(data));
         }
 
         function modify(stage, amount) {
@@ -344,7 +339,7 @@
         function undoAction() {
             if (historyStack.length > 0) {
                 data = historyStack.pop();
-                localStorage.setItem('vocab_pipeline_centered_hist', JSON.stringify(historyStack));
+                localStorage.setItem('vocab_pipeline_boxed_undo_hist', JSON.stringify(historyStack));
                 updateUI();
             } else {
                 alert("No actions to undo!");
