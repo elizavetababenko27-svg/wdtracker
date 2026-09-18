@@ -14,6 +14,8 @@
             --accent-hover: #1b6cb0;
             --success-color: #0f7b6c;
             --muted-color: #9b9a97;
+            --undo-bg: #f3f3f2;
+            --undo-hover: #e8e8e6;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -26,6 +28,8 @@
                 --accent-hover: #60a5fa;
                 --success-color: #10b981;
                 --muted-color: #888888;
+                --undo-bg: #2c2c2c;
+                --undo-hover: #383838;
             }
         }
 
@@ -140,6 +144,20 @@
             opacity: 0.9;
         }
 
+        .btn-undo {
+            background: var(--undo-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            padding: 8px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .btn-undo:hover {
+            background: var(--undo-hover);
+        }
+
         .mastered-box {
             background: var(--bg-color);
             border: 1px solid var(--border-color);
@@ -148,6 +166,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 8px;
         }
 
         .mastered-title {
@@ -200,15 +219,24 @@
             <span class="mastered-title">🌟 Total Mastered</span>
             <span class="mastered-count" id="masteredCount">0</span>
         </div>
+
+        <button class="btn-undo" onclick="undoAction()">↩ Undo Last Action</button>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_steps')) || {
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_undo')) || {
             inbox: 0,
             active: 0,
             review: 0,
             mastered: 0
         };
+
+        let previousData = JSON.parse(localStorage.getItem('vocab_pipeline_prev')) || null;
+
+        function saveState() {
+            previousData = { ...data };
+            localStorage.setItem('vocab_pipeline_prev', JSON.stringify(previousData));
+        }
 
         function updateUI() {
             document.getElementById('inboxCount').innerText = data.inbox;
@@ -216,16 +244,18 @@
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
             
-            localStorage.setItem('vocab_pipeline_steps', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_undo', JSON.stringify(data));
         }
 
         function modifyInbox(amount) {
+            saveState();
             data.inbox = Math.max(0, data.inbox + amount);
             updateUI();
         }
 
         function moveInboxToActive() {
             if (data.inbox > 0) {
+                saveState();
                 data.active += data.inbox;
                 data.inbox = 0;
                 updateUI();
@@ -236,6 +266,7 @@
 
         function moveActiveToReview() {
             if (data.active > 0) {
+                saveState();
                 data.review += data.active;
                 data.active = 0;
                 updateUI();
@@ -246,11 +277,23 @@
 
         function moveReviewToMastered() {
             if (data.review > 0) {
+                saveState();
                 data.mastered += data.review;
                 data.review = 0;
                 updateUI();
             } else {
                 alert("Review stage is empty!");
+            }
+        }
+
+        function undoAction() {
+            if (previousData) {
+                data = { ...previousData };
+                previousData = null; // снуємо пам'ять до наступної дії
+                localStorage.removeItem('vocab_pipeline_prev');
+                updateUI();
+            } else {
+                alert("No actions to undo!");
             }
         }
 
