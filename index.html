@@ -52,7 +52,7 @@
 
         .widget-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -69,84 +69,76 @@
             align-items: center;
         }
 
-        .pipeline-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .pipeline-stack {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 12px;
         }
 
-        .stage-box {
+        .stage-card {
             background: var(--bg-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 12px;
-            text-align: center;
-            position: relative;
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
         }
 
         .stage-title {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--muted-color);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            font-weight: 600;
         }
 
         .stage-count {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
         }
 
-        /* Кнопки прямо всередині Inbox для швидкого додавання */
-        .inbox-inline-controls {
+        /* Кнопки під кожним етапом */
+        .stage-actions {
             display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin-top: 6px;
-        }
-
-        .inbox-inline-controls button {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .inbox-inline-controls button:hover {
-            background: var(--border-color);
+            gap: 6px;
         }
 
         button {
             background: var(--bg-color);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 9px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
+            flex: 1;
         }
 
         button:hover {
             background: var(--border-color);
         }
 
-        .btn-primary {
+        .btn-action {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+        }
+
+        .btn-move {
             background: var(--accent-color);
             color: #ffffff;
             border: none;
-            width: 100%;
-            padding: 10px;
             font-weight: 600;
-            margin-bottom: 8px;
         }
 
-        .btn-primary:hover {
+        .btn-move:hover {
             background: var(--accent-hover);
         }
 
@@ -154,14 +146,34 @@
             background: var(--success-color);
             color: #ffffff;
             border: none;
-            width: 100%;
-            padding: 10px;
             font-weight: 600;
-            margin-bottom: 12px;
         }
 
         .btn-success:hover {
             opacity: 0.9;
+        }
+
+        .mastered-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .mastered-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .mastered-count {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--success-color);
         }
 
         .action-row {
@@ -200,29 +212,6 @@
             background: var(--reset-color);
             color: #ffffff;
         }
-
-        .mastered-box {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .mastered-title {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--success-color);
-        }
-
-        .mastered-count {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--success-color);
-        }
     </style>
 </head>
 <body>
@@ -233,62 +222,78 @@
             <span style="font-size: 11px; color: var(--muted-color); font-weight: normal;">English</span>
         </h2>
 
-        <div class="pipeline-grid">
-            <!-- Inbox із міні-кнопками прямо всередині -->
-            <div class="stage-box">
-                <div class="stage-title">📥 Inbox</div>
-                <div class="stage-count" id="inboxCount">0</div>
-                <div class="inbox-inline-controls">
-                    <button onclick="modifyInbox(-1)">-1</button>
-                    <button onclick="modifyInbox(1)">+1</button>
-                    <button onclick="modifyInbox(5)">+5</button>
+        <div class="pipeline-stack">
+            <!-- 1. Inbox -->
+            <div class="stage-card">
+                <div class="stage-header">
+                    <span class="stage-title">📥 Inbox</span>
+                    <span class="stage-count" id="inboxCount">0</span>
+                </div>
+                <div class="stage-actions">
+                    <button class="btn-action" onclick="modify('inbox', -1)">-1</button>
+                    <button class="btn-action" onclick="modify('inbox', 1)">+1</button>
+                    <button class="btn-action" onclick="modify('inbox', 5)">+5</button>
+                    <button class="btn-move" onclick="moveInboxToActive()">Move ➔</button>
                 </div>
             </div>
 
-            <!-- Active -->
-            <div class="stage-box">
-                <div class="stage-title">🔄 Active</div>
-                <div class="stage-count" id="activeCount" style="margin-top: 14px;">0</div>
+            <!-- 2. Active -->
+            <div class="stage-card">
+                <div class="stage-header">
+                    <span class="stage-title">🔄 Active</span>
+                    <span class="stage-count" id="activeCount">0</span>
+                </div>
+                <div class="stage-actions">
+                    <button class="btn-action" onclick="modify('active', -1)">-1</button>
+                    <button class="btn-action" onclick="modify('active', 1)">+1</button>
+                    <button class="btn-move" onclick="moveActiveToReview()" style="background-color: #6366f1;">Move ➔</button>
+                </div>
             </div>
 
-            <!-- Review Stage на всю ширину -->
-            <div class="stage-box" style="grid-column: span 2;">
-                <div class="stage-title">🔥 Review Stage</div>
-                <div class="stage-count" id="reviewCount">0</div>
+            <!-- 3. Review Stage -->
+            <div class="stage-card">
+                <div class="stage-header">
+                    <span class="stage-title">🔥 Review Stage</span>
+                    <span class="stage-count" id="reviewCount">0</span>
+                </div>
+                <div class="stage-actions">
+                    <button class="btn-action" onclick="modify('review', -1)">-1</button>
+                    <button class="btn-action" onclick="modify('review', 1)">+1</button>
+                    <button class="btn-success" onclick="moveReviewToMastered()">Master 🌟</button>
+                </div>
             </div>
         </div>
 
-        <!-- Головні кнопки потоку конвеєра -->
-        <button class="btn-primary" onclick="moveInboxToActive()">Move Inbox ➔ Active</button>
-        <button class="btn-primary" onclick="moveActiveToReview()" style="background-color: #6366f1;">Move Active ➔ Review</button>
-        <button class="btn-success" onclick="moveReviewToMastered()">Move Review ➔ Mastered 🌟</button>
-
-        <!-- Підсумок -->
+        <!-- Mastered Result -->
         <div class="mastered-box">
             <span class="mastered-title">🌟 Total Mastered</span>
             <span class="mastered-count" id="masteredCount">0</span>
         </div>
 
-        <!-- Допоміжні кнопки (Undo / Reset) знизу -->
+        <!-- Global Actions: Undo & Reset -->
         <div class="action-row">
-            <button class="btn-undo" onclick="undoAction()">↩ Undo</button>
+            <button class="btn-undo" onclick="undoAction()">↩ Undo (<span id="undoCount">0</span>)</button>
             <button class="btn-reset" onclick="resetAll()">🗑️ Reset All</button>
         </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_ux')) || {
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_multi_undo')) || {
             inbox: 0,
             active: 0,
             review: 0,
             mastered: 0
         };
 
-        let previousData = JSON.parse(localStorage.getItem('vocab_pipeline_ux_prev')) || null;
+        // Масив історії для багаторазового Undo (до 20 останніх кроків)
+        let historyStack = JSON.parse(localStorage.getItem('vocab_pipeline_history')) || [];
 
         function saveState() {
-            previousData = { ...data };
-            localStorage.setItem('vocab_pipeline_ux_prev', JSON.stringify(previousData));
+            historyStack.push({ ...data });
+            if (historyStack.length > 20) {
+                historyStack.shift(); // обмежуємо історію останками до 20 кроків
+            }
+            localStorage.setItem('vocab_pipeline_history', JSON.stringify(historyStack));
         }
 
         function updateUI() {
@@ -296,13 +301,14 @@
             document.getElementById('activeCount').innerText = data.active;
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
+            document.getElementById('undoCount').innerText = historyStack.length;
             
-            localStorage.setItem('vocab_pipeline_ux', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_multi_undo', JSON.stringify(data));
         }
 
-        function modifyInbox(amount) {
+        function modify(stage, amount) {
             saveState();
-            data.inbox = Math.max(0, data.inbox + amount);
+            data[stage] = Math.max(0, data[stage] + amount);
             updateUI();
         }
 
@@ -340,10 +346,9 @@
         }
 
         function undoAction() {
-            if (previousData) {
-                data = { ...previousData };
-                previousData = null;
-                localStorage.removeItem('vocab_pipeline_ux_prev');
+            if (historyStack.length > 0) {
+                data = historyStack.pop();
+                localStorage.setItem('vocab_pipeline_history', JSON.stringify(historyStack));
                 updateUI();
             } else {
                 alert("No actions to undo!");
