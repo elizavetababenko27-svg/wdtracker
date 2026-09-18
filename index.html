@@ -56,13 +56,13 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
         }
 
         h2 {
-            font-size: 16px;
-            margin: 0 0 16px 0;
+            font-size: 15px;
+            margin: 0 0 14px 0;
             font-weight: 600;
             display: flex;
             justify-content: space-between;
@@ -73,7 +73,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .stage-box {
@@ -82,6 +82,7 @@
             border-radius: 8px;
             padding: 12px;
             text-align: center;
+            position: relative;
         }
 
         .stage-title {
@@ -89,7 +90,7 @@
             color: var(--muted-color);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .stage-count {
@@ -97,18 +98,33 @@
             font-weight: 700;
         }
 
-        .controls {
+        /* Кнопки прямо всередині Inbox для швидкого додавання */
+        .inbox-inline-controls {
             display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .inbox-inline-controls button {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .inbox-inline-controls button:hover {
+            background: var(--border-color);
         }
 
         button {
-            flex: 1;
             background: var(--bg-color);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 8px 12px;
+            padding: 9px 12px;
             border-radius: 6px;
             font-size: 13px;
             font-weight: 500;
@@ -141,7 +157,7 @@
             width: 100%;
             padding: 10px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .btn-success:hover {
@@ -151,6 +167,8 @@
         .action-row {
             display: flex;
             gap: 8px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 12px;
             margin-top: 4px;
         }
 
@@ -158,7 +176,8 @@
             background: var(--undo-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 8px;
+            padding: 7px;
+            font-size: 12px;
             font-weight: 500;
             flex: 1;
         }
@@ -171,7 +190,8 @@
             background: transparent;
             color: var(--reset-color);
             border: 1px solid var(--reset-color);
-            padding: 8px;
+            padding: 7px;
+            font-size: 12px;
             font-weight: 500;
             flex: 1;
         }
@@ -185,11 +205,11 @@
             background: var(--bg-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .mastered-title {
@@ -210,39 +230,46 @@
     <div class="widget-container">
         <h2>
             <span>Vocabulary Pipeline</span>
-            <span style="font-size: 12px; color: var(--muted-color); font-weight: normal;">English</span>
+            <span style="font-size: 11px; color: var(--muted-color); font-weight: normal;">English</span>
         </h2>
 
         <div class="pipeline-grid">
+            <!-- Inbox із міні-кнопками прямо всередині -->
             <div class="stage-box">
                 <div class="stage-title">📥 Inbox</div>
                 <div class="stage-count" id="inboxCount">0</div>
+                <div class="inbox-inline-controls">
+                    <button onclick="modifyInbox(-1)">-1</button>
+                    <button onclick="modifyInbox(1)">+1</button>
+                    <button onclick="modifyInbox(5)">+5</button>
+                </div>
             </div>
+
+            <!-- Active -->
             <div class="stage-box">
                 <div class="stage-title">🔄 Active</div>
-                <div class="stage-count" id="activeCount">0</div>
+                <div class="stage-count" id="activeCount" style="margin-top: 14px;">0</div>
             </div>
+
+            <!-- Review Stage на всю ширину -->
             <div class="stage-box" style="grid-column: span 2;">
                 <div class="stage-title">🔥 Review Stage</div>
                 <div class="stage-count" id="reviewCount">0</div>
             </div>
         </div>
 
-        <div class="controls">
-            <button onclick="modifyInbox(-1)">-1 Inbox</button>
-            <button onclick="modifyInbox(1)">+1 Inbox</button>
-            <button onclick="modifyInbox(5)">+5 Inbox</button>
-        </div>
+        <!-- Головні кнопки потоку конвеєра -->
+        <button class="btn-primary" onclick="moveInboxToActive()">Move Inbox ➔ Active</button>
+        <button class="btn-primary" onclick="moveActiveToReview()" style="background-color: #6366f1;">Move Active ➔ Review</button>
+        <button class="btn-success" onclick="moveReviewToMastered()">Move Review ➔ Mastered 🌟</button>
 
-        <button class="btn-primary" onclick="moveInboxToActive()">Move Inbox to Active (➔)</button>
-        <button class="btn-primary" onclick="moveActiveToReview()" style="background-color: #6366f1;">Move Active to Review (➔)</button>
-        <button class="btn-success" onclick="moveReviewToMastered()">Move Review to Mastered (🌟)</button>
-
+        <!-- Підсумок -->
         <div class="mastered-box">
             <span class="mastered-title">🌟 Total Mastered</span>
             <span class="mastered-count" id="masteredCount">0</span>
         </div>
 
+        <!-- Допоміжні кнопки (Undo / Reset) знизу -->
         <div class="action-row">
             <button class="btn-undo" onclick="undoAction()">↩ Undo</button>
             <button class="btn-reset" onclick="resetAll()">🗑️ Reset All</button>
@@ -250,18 +277,18 @@
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_reset')) || {
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_ux')) || {
             inbox: 0,
             active: 0,
             review: 0,
             mastered: 0
         };
 
-        let previousData = JSON.parse(localStorage.getItem('vocab_pipeline_reset_prev')) || null;
+        let previousData = JSON.parse(localStorage.getItem('vocab_pipeline_ux_prev')) || null;
 
         function saveState() {
             previousData = { ...data };
-            localStorage.setItem('vocab_pipeline_reset_prev', JSON.stringify(previousData));
+            localStorage.setItem('vocab_pipeline_ux_prev', JSON.stringify(previousData));
         }
 
         function updateUI() {
@@ -270,7 +297,7 @@
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
             
-            localStorage.setItem('vocab_pipeline_reset', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_ux', JSON.stringify(data));
         }
 
         function modifyInbox(amount) {
@@ -316,7 +343,7 @@
             if (previousData) {
                 data = { ...previousData };
                 previousData = null;
-                localStorage.removeItem('vocab_pipeline_reset_prev');
+                localStorage.removeItem('vocab_pipeline_ux_prev');
                 updateUI();
             } else {
                 alert("No actions to undo!");
