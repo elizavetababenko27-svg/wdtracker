@@ -76,11 +76,6 @@
             text-align: center;
         }
 
-        .stage-box.active-pack {
-            border-color: var(--accent-color);
-            border-width: 2px;
-        }
-
         .stage-title {
             font-size: 11px;
             color: var(--muted-color);
@@ -97,7 +92,7 @@
         .controls {
             display: flex;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         button {
@@ -129,6 +124,20 @@
 
         .btn-primary:hover {
             background: var(--accent-hover);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
         }
 
         .mastered-box {
@@ -165,37 +174,40 @@
         <div class="pipeline-grid">
             <div class="stage-box">
                 <div class="stage-title">📥 Inbox</div>
-                <div class="stage-count" id="inboxCount">15</div>
+                <div class="stage-count" id="inboxCount">0</div>
             </div>
-            <div class="stage-box active-pack">
+            <div class="stage-box">
                 <div class="stage-title">🔄 Active</div>
-                <div class="stage-count" id="activeCount">12</div>
+                <div class="stage-count" id="activeCount">0</div>
             </div>
             <div class="stage-box" style="grid-column: span 2;">
                 <div class="stage-title">🔥 Review Stage</div>
-                <div class="stage-count" id="reviewCount">10</div>
+                <div class="stage-count" id="reviewCount">0</div>
             </div>
         </div>
 
         <div class="controls">
-            <button onclick="modifyInbox(-5)">-5 Inbox</button>
+            <button onclick="modifyInbox(-1)">-1 Inbox</button>
+            <button onclick="modifyInbox(1)">+1 Inbox</button>
             <button onclick="modifyInbox(5)">+5 Inbox</button>
         </div>
 
-        <button class="btn-primary" onclick="moveAllToActive()">Move All Inbox to Active (➔)</button>
+        <button class="btn-primary" onclick="moveInboxToActive()">Move Inbox to Active (➔)</button>
+        <button class="btn-primary" onclick="moveActiveToReview()" style="background-color: #6366f1;">Move Active to Review (➔)</button>
+        <button class="btn-success" onclick="moveReviewToMastered()">Move Review to Mastered (🌟)</button>
 
         <div class="mastered-box">
             <span class="mastered-title">🌟 Total Mastered</span>
-            <span class="mastered-count" id="masteredCount">120</span>
+            <span class="mastered-count" id="masteredCount">0</span>
         </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('vocab_pipeline_all')) || {
-            inbox: 15,
-            active: 12,
-            review: 10,
-            mastered: 120
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_steps')) || {
+            inbox: 0,
+            active: 0,
+            review: 0,
+            mastered: 0
         };
 
         function updateUI() {
@@ -204,7 +216,7 @@
             document.getElementById('reviewCount').innerText = data.review;
             document.getElementById('masteredCount').innerText = data.mastered;
             
-            localStorage.setItem('vocab_pipeline_all', JSON.stringify(data));
+            localStorage.setItem('vocab_pipeline_steps', JSON.stringify(data));
         }
 
         function modifyInbox(amount) {
@@ -212,13 +224,33 @@
             updateUI();
         }
 
-        function moveAllToActive() {
+        function moveInboxToActive() {
             if (data.inbox > 0) {
                 data.active += data.inbox;
                 data.inbox = 0;
                 updateUI();
             } else {
-                alert("Inbox is already empty!");
+                alert("Inbox is empty!");
+            }
+        }
+
+        function moveActiveToReview() {
+            if (data.active > 0) {
+                data.review += data.active;
+                data.active = 0;
+                updateUI();
+            } else {
+                alert("Active stage is empty!");
+            }
+        }
+
+        function moveReviewToMastered() {
+            if (data.review > 0) {
+                data.mastered += data.review;
+                data.review = 0;
+                updateUI();
+            } else {
+                alert("Review stage is empty!");
             }
         }
 
