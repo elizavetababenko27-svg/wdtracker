@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Pipeline</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #37352f;
+            --border-color: #e6e6e6;
+            --card-bg: #f7f6f3;
+            --accent-color: #2383e2;
+            --accent-hover: #1b6cb0;
+            --success-color: #0f7b6c;
+            --muted-color: #9b9a97;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #191919;
+                --text-color: #dbdbd7;
+                --border-color: #2f2f2f;
+                --card-bg: #202020;
+                --accent-color: #3b82f6;
+                --accent-hover: #60a5fa;
+                --success-color: #10b981;
+                --muted-color: #888888;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .widget-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stage-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stage-box.active-pack {
+            border-color: var(--accent-color);
+            border-width: 2px;
+        }
+
+        .stage-title {
+            font-size: 11px;
+            color: var(--muted-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stage-count {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            flex: 1;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--border-color);
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .mastered-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mastered-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--success-color);
+        }
+
+        .mastered-count {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <h2>
+            <span>Vocabulary Pipeline</span>
+            <span style="font-size: 12px; color: var(--muted-color); font-weight: normal;">English</span>
+        </h2>
+
+        <div class="pipeline-grid">
+            <div class="stage-box">
+                <div class="stage-title">📥 Inbox</div>
+                <div class="stage-count" id="inboxCount">15</div>
+            </div>
+            <div class="stage-box active-pack">
+                <div class="stage-title">🔄 Active</div>
+                <div class="stage-count" id="activeCount">12</div>
+            </div>
+            <div class="stage-box" style="grid-column: span 2;">
+                <div class="stage-title">🔥 Review Stage</div>
+                <div class="stage-count" id="reviewCount">10</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="modifyInbox(-5)">-5 Inbox</button>
+            <button onclick="modifyInbox(5)">+5 Inbox</button>
+        </div>
+
+        <button class="btn-primary" onclick="moveAllToActive()">Move All Inbox to Active (➔)</button>
+
+        <div class="mastered-box">
+            <span class="mastered-title">🌟 Total Mastered</span>
+            <span class="mastered-count" id="masteredCount">120</span>
+        </div>
+    </div>
+
+    <script>
+        let data = JSON.parse(localStorage.getItem('vocab_pipeline_all')) || {
+            inbox: 15,
+            active: 12,
+            review: 10,
+            mastered: 120
+        };
+
+        function updateUI() {
+            document.getElementById('inboxCount').innerText = data.inbox;
+            document.getElementById('activeCount').innerText = data.active;
+            document.getElementById('reviewCount').innerText = data.review;
+            document.getElementById('masteredCount').innerText = data.mastered;
+            
+            localStorage.setItem('vocab_pipeline_all', JSON.stringify(data));
+        }
+
+        function modifyInbox(amount) {
+            data.inbox = Math.max(0, data.inbox + amount);
+            updateUI();
+        }
+
+        function moveAllToActive() {
+            if (data.inbox > 0) {
+                data.active += data.inbox;
+                data.inbox = 0;
+                updateUI();
+            } else {
+                alert("Inbox is already empty!");
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
